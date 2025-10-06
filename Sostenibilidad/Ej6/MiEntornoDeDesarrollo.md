@@ -27,6 +27,7 @@ Al acabar el curso pasado, hice un reseteo de todos los discos duros de mi orden
 
 Con los componentes que tengo he visitado la página web https://www.geeknetic.es/calculadora-fuente-alimentacion, y he calculado el consumo de mis componentes.
 ![Imagen Actualizar](image2.png)
+
 https://www.geeknetic.es/cfa/lMJ9qtU09zf/ Resultado.
 
 Esto es lo que consumiría mi PC a máxima potencia, con todo trabajando al máximo. Programando estaría en unos 250W, (sin contar pantallas) que es un poco elevado simplemente para programar, pero también lo uso para jugar, por lo que es un equilibrio, no tengo lo mas tope de gama, pero me da para lo que necesito.
@@ -56,4 +57,5 @@ Lo que se me ocurre es optimizar el código, ya que optimizando reduces el tiemp
 <h2>Reflexión Personal</h2>
 
 Después de hacer esta actividad me he dado cuenta de que muchas veces no somos conscientes del impacto que tiene la tecnología que usamos todos los días. Siempre pensamos en que el ordenador sea rápido o que tenga buena gráfica, pero no en la energía que gasta o en si realmente necesitamos tanta potencia.
+
 También me ha hecho pensar que mantener el equipo ordenado y actualizado no solo mejora el rendimiento, sino que también ayuda a no tener programas inútiles consumiendo recursos.
