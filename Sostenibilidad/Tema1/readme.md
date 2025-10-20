@@ -144,9 +144,8 @@ El programa procesará el CSV y mostrará los 3 municipios con mayor mediana de 
 Este proyecto destaca por:
 
 ✅ **Procesamiento de datos reales** sin dependencias externas  
-✅ **Código limpio y comprensible** usando solo Java puro  
-✅ **Solución completa**: lectura, limpieza, ordenamiento y presentación  
-✅ **Aplicación práctica** de estructuras de datos y algoritmos  
+✅ **Código limpio y comprensible** usando solo Java  
+✅ **Aplicación práctica** de estructuras de datos 
 
 Refleja mi capacidad para:
 - Analizar y resolver problemas del mundo real
