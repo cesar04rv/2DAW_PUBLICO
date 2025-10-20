@@ -132,10 +132,10 @@ Municipio C, 5205.8, 28003
 ## 🚀 Cómo Ejecutar
 
 ```bash
-java csv ruta_al_archivo/ciudades.csv
+java csv ruta_del_archivo/
 ```
 
-El programa procesará el CSV y mostrará los 3 municipios con mayor mediana de consumo eléctrico.
+El programa procesará el CSV y mostrará los 3 municipios con mayor mediana de consumo eléctrico. (El .csv debe estar en la misma carpeta que el .java) 
 
 ---
 
