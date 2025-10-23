@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valenbisi - Mapa y Disponibilidad</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      margin: 20px;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+    }
+
+    #map {
+      height: 500px;
+      max-width: 1200px;
+      margin: 20px auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .legend {
+      max-width: 1200px;
+      margin: 10px auto 30px auto;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .legend span {
+      display: inline-block;
+      margin: 0 15px;
+    }
+
+    .color-box {
+      display: inline-block;
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      margin-right: 5px;
+      vertical-align: middle;
+    }
+
+    #search-input {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 15px;
+      width: 320px;
+      max-width: 90%;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+
+    table {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    th {
+      background-color: #2980b9;
+      color: white;
+      padding: 12px;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:hover {
+      background-color: #f1f9ff;
+    }
+
+    .center {
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>🚲 Valenbisi - Mapa y Disponibilidad</h1>
+
+  <!-- Mapa -->
+  <div id="map"></div>
+
+  <!-- Leyenda -->
+  <div class="legend">
+    <span><span class="color-box" style="background:#27ae60;"></span>Muchas bicis (≥5)</span>
+    <span><span class="color-box" style="background:#f39c12;"></span>Pocas bicis (1-4)</span>
+    <span><span class="color-box" style="background:#e74c3c;"></span>Sin bicis</span>
+    <span><span class="color-box" style="background:#3498db;"></span>Tu ubicación</span>
+  </div>
+
+  <!-- Buscador -->
+  <input type="text" id="search-input" placeholder="Buscar estación por dirección..." />
+
+  <!-- Tabla -->
+  <table>
+    <thead>
+      <tr>
+        <th>Estación</th>
+        <th>Dirección</th>
+        <th class="center">Bicis</th>
+        <th class="center">Anclajes libres</th>
+        <th class="center">Distancia</th>
+      </tr>
+    </thead>
+    <tbody id="tabla">
+      <tr>
+        <td colspan="5" class="center">Cargando...</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script>
+    // Variables globales
+    let mapa;
+    let estaciones = [];
+    let miUbicacion = null;
+
+    // Crear el mapa
+    mapa = L.map('map').setView([39.4699, -0.3763], 13);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapa);
+
+    // Función para calcular distancia entre dos puntos
+    function calcularDistancia(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Radio de la Tierra en km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      return R * c;
+    }
+
+    // Función para elegir color según bicis disponibles
+    function elegirColor(bicis) {
+      if (bicis === 0) return '#e74c3c'; // Rojo
+      if (bicis < 5) return '#f39c12';   // Naranja
+      return '#27ae60';                   // Verde
+    }
+
+    // Obtener ubicación del usuario
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function (posicion) {
+        miUbicacion = {
+          lat: posicion.coords.latitude,
+          lng: posicion.coords.longitude
+        };
+
+        // Marcar mi ubicación en el mapa
+        L.circleMarker([miUbicacion.lat, miUbicacion.lng], {
+          color: '#3498db',
+          fillColor: '#3498db',
+          fillOpacity: 0.8,
+          radius: 10
+        }).addTo(mapa).bindPopup('<strong>Tu ubicación</strong>');
+
+        // Centrar mapa en mi ubicación
+        mapa.setView([miUbicacion.lat, miUbicacion.lng], 15);
+
+        // Actualizar distancias
+        actualizarDistancias();
+        mostrarTabla(estaciones);
+      });
+    }
+
+    // Función para actualizar las distancias
+    function actualizarDistancias() {
+      if (!miUbicacion) return;
+
+      estaciones.forEach(function (estacion) {
+        if (estacion.geo_point_2d) {
+          estacion.distancia = calcularDistancia(
+            miUbicacion.lat,
+            miUbicacion.lng,
+            estacion.geo_point_2d.lat,
+            estacion.geo_point_2d.lon
+          );
+        }
+      });
+    }
+
+    // Función para mostrar la tabla
+    function mostrarTabla(datos) {
+      const tbody = document.getElementById('tabla');
+      tbody.innerHTML = '';
+
+      if (datos.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="center">No hay estaciones</td></tr>';
+        return;
+      }
+
+      datos.forEach(function (estacion) {
+        const fila = document.createElement('tr');
+        const dist = estacion.distancia ? estacion.distancia.toFixed(2) + ' km' : 'N/A';
+
+        fila.innerHTML = `
+          <td>${estacion.number}</td>
+          <td>${estacion.address}</td>
+          <td class="center">${estacion.available}</td>
+          <td class="center">${estacion.free}</td>
+          <td class="center">${dist}</td>
+        `;
+        tbody.appendChild(fila);
+      });
+    }
+
+    // Cargar datos de la API
+    async function cargarEstaciones() {
+      try {
+        // Hacer 3 peticiones para obtener todas las estaciones
+        const respuesta1 = await fetch('https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/valenbisi-disponibilitat-valenbisi-dsiponibilidad/records?limit=100&offset=0');
+        const datos1 = await respuesta1.json();
+        
+        const respuesta2 = await fetch('https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/valenbisi-disponibilitat-valenbisi-dsiponibilidad/records?limit=100&offset=100');
+        const datos2 = await respuesta2.json();
+        
+        const respuesta3 = await fetch('https://valencia.opendatasoft.com/api/explore/v2.1/catalog/datasets/valenbisi-disponibilitat-valenbisi-dsiponibilidad/records?limit=100&offset=200');
+        const datos3 = await respuesta3.json();
+        
+        // Juntar todas las estaciones
+        estaciones = datos1.results.concat(datos2.results).concat(datos3.results);
+
+        // Mostrar estaciones en el mapa
+        estaciones.forEach(function (estacion) {
+          if (estacion.geo_point_2d) {
+            const color = elegirColor(estacion.available);
+
+            L.circleMarker([estacion.geo_point_2d.lat, estacion.geo_point_2d.lon], {
+              color: color,
+              fillColor: color,
+              fillOpacity: 0.7,
+              radius: 8
+            }).addTo(mapa).bindPopup(`
+              <strong>Estación ${estacion.number}</strong><br>
+              ${estacion.address}<br>
+              Bicis: ${estacion.available}
+            `);
+          }
+        });
+
+        // Actualizar distancias si ya tengo ubicación
+        actualizarDistancias();
+
+        // Mostrar tabla
+        mostrarTabla(estaciones);
+
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('tabla').innerHTML = '<tr><td colspan="5" class="center" style="color:red;">Error al cargar datos</td></tr>';
+      }
+    }
+
+    // Buscador
+    document.getElementById('search-input').addEventListener('input', function () {
+      const busqueda = this.value.toLowerCase();
+      const filtradas = estaciones.filter(function (estacion) {
+        return estacion.address.toLowerCase().includes(busqueda);
+      });
+      mostrarTabla(filtradas);
+    });
+
+    // Cargar todo al inicio
+    cargarEstaciones();
+  </script>
+</body>
+
+</html>

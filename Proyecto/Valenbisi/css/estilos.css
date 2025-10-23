@@ -1,0 +1,83 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #f5f7fa;
+  margin: 20px;
+  color: #333;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+}
+
+#map {
+  height: 500px;
+  max-width: 1200px;
+  margin: 20px auto;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.legend {
+  max-width: 1200px;
+  margin: 10px auto 30px auto;
+  padding: 15px;
+  background: white;
+  border-radius: 8px;
+  text-align: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.legend span {
+  display: inline-block;
+  margin: 0 15px;
+}
+
+.color-box {
+  display: inline-block;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  margin-right: 5px;
+  vertical-align: middle;
+}
+
+#search-input {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 15px;
+  width: 320px;
+  max-width: 90%;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+th {
+  background-color: #2980b9;
+  color: white;
+  padding: 12px;
+}
+
+td {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+  background-color: #f1f9ff;
+}
+
+.center {
+  text-align: center;
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Valenbisi - Mapa y Disponibilidad</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
+  <link rel="stylesheet" href="css/estilos.css" />
+</head>
+
+<body>
+  <h1>🚲 Valenbisi - Mapa y Disponibilidad</h1>
+
+  <!-- Mapa -->
+  <div id="map"></div>
+
+  <!-- Leyenda -->
+  <div class="legend">
+    <span><span class="color-box" style="background:#27ae60;"></span>Muchas bicis (≥5)</span>
+    <span><span class="color-box" style="background:#f39c12;"></span>Pocas bicis (1-4)</span>
+    <span><span class="color-box" style="background:#e74c3c;"></span>Sin bicis</span>
+    <span><span class="color-box" style="background:#3498db;"></span>Tu ubicación</span>
+  </div>
+
+  <!-- Buscador -->
+  <input type="text" id="search-input" placeholder="Buscar estación por dirección..." />
+
+  <!-- Tabla -->
+  <table>
+    <thead>
+      <tr>
+        <th>Estación</th>
+        <th>Dirección</th>
+        <th class="center">Bicis</th>
+        <th class="center">Anclajes libres</th>
+        <th class="center">Distancia</th>
+      </tr>
+    </thead>
+    <tbody id="tabla">
+      <tr>
+        <td colspan="5" class="center">Cargando...</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="js/controlador.js"></script>
+  <script src="js/vista.js"></script>
+  <script src="js/app.js"></script>
+</body>
+
+</html>
